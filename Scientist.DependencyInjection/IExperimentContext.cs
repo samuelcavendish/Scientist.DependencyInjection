@@ -1,3 +1,3 @@
-﻿namespace GitHub.Scientist.DependencyInjection;
+﻿namespace GitHub.DependencyInjection;
 
 public interface IExperimentContext { }

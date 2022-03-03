@@ -1,11 +1,17 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace GitHub.Scientist.DependencyInjection;
+namespace GitHub.DependencyInjection;
 
 public class ExperimentConfiguration
 {
-    public IServiceCollection Services { get; init; } = null!;
+    private readonly IServiceCollection _services;
+
+    public ExperimentConfiguration(IServiceCollection services)
+    {
+        _services = services;
+    }
+
     public ExperimentConfiguration AddExperimentContext<T>(Func<IServiceCollection, IServiceCollection> experimentConfiguration)
         where T : class, IExperimentContext
     {
@@ -15,7 +21,7 @@ public class ExperimentConfiguration
                 scientistServices.AddSingleton<T>();
                 experimentConfiguration(scientistServices);
             }).Build();
-        Services.AddSingleton<T>(scientistHost.Services.GetRequiredService<T>());
+        _services.AddSingleton(scientistHost.Services.GetRequiredService<T>());
         return this;
     }
 }

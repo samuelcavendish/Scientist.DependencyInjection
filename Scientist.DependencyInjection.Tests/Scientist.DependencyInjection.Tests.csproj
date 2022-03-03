@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
+
+    <RootNamespace>Github.DependencyInjection.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

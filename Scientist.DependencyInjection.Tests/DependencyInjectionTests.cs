@@ -1,11 +1,12 @@
-using GitHub.Scientist.DependencyInjection;
+using GitHub;
+using GitHub.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Moq;
 using Shouldly;
 using Xunit;
 
-namespace Scientist.DependencyInjection.Tests;
+namespace Github.DependencyInjection.Tests;
 
 public class DependencyInjectionTests
 {
@@ -16,20 +17,51 @@ public class DependencyInjectionTests
             .ConfigureServices(services =>
             {
                 // Normal dependency
-                services.AddSingleton(Mock.Of<IExperimentDependency>());
+                services.AddSingleton(new Dependency());
                 services.AddExperimentContexts(scientist =>
                 {
                     scientist.AddExperimentContext<ExperimentContext>(services =>
                     {
                         // Experiment dependency
-                        return services.AddSingleton(Mock.Of<IExperimentDependency>());
+                        return services.AddSingleton(new Dependency());
                     });
                 });
             }).Build();
 
-        var mainContextItem = container.Services.GetRequiredService<IExperimentDependency>();
+
+        var mainContextItem = container.Services.GetRequiredService<Dependency>();
         var scienceContextItem = container.Services.GetRequiredService<ExperimentContext>().ExperimentDependency;
-        scienceContextItem.ShouldNotBeNull();
-        mainContextItem.ShouldNotBe(scienceContextItem);
+        mainContextItem.GetValue().ShouldBe(mainContextItem.GetValue());
+        mainContextItem.GetValue().ShouldNotBe(scienceContextItem.GetValue());
+    }
+
+    [Fact]
+    public void Should_RunExperiment()
+    {
+        var originalDependency = new Mock<Dependency>();
+        var experimentDependency = new Mock<Dependency>();
+        var container = Host.CreateDefaultBuilder()
+            .ConfigureServices(services =>
+            {
+                services.AddTransient<IScientist, Scientist>();
+                services.AddTransient<IResultPublisher, Publisher>();
+                // Normal dependency
+                services.AddSingleton(originalDependency.Object);
+                services.AddSingleton<Experiment>();
+                services.AddExperimentContexts(scientist =>
+                {
+                    scientist.AddExperimentContext<ExperimentContext>(services =>
+                    {
+                        // Experiment dependency
+                        return services.AddSingleton(experimentDependency.Object);
+                    });
+                });
+            }).Build();
+
+        var experiment = container.Services.GetRequiredService<Experiment>();
+        _ = experiment.GetValue();
+
+        originalDependency.Verify(x => x.GetValue(), Times.Once());
+        experimentDependency.Verify(x => x.GetValue(), Times.Once());
     }
 }

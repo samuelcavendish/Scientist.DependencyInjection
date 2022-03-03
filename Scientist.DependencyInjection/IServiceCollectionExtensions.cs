@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace GitHub.Scientist.DependencyInjection;
+namespace GitHub.DependencyInjection;
 
 public static class IServiceCollectionExtensions
 {
@@ -8,7 +8,7 @@ public static class IServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(experimentConfiguration);
 
-        experimentConfiguration(new ExperimentConfiguration { Services = services });
+        experimentConfiguration(new ExperimentConfiguration(services));
         return services;
     }
 }
