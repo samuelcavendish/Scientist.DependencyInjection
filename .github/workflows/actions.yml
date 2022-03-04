@@ -23,31 +23,30 @@ jobs:
 
         if ('${{github.event_name }}' -eq 'pull_request')
         {
-            $BranchName = "PR${{github.event.number}}"
+          $BranchName = "PR${{github.event.number}}"
         }
-        
-        Write-Host "Branch: $Branch - Branch Name $BranchName"
 
-        $LastTag = git tag --sort=-committerdate -l [0-9].[0-9].[0-9] | Select-Object -First 1
+        $LastTag = git tag --sort=-committerdate -l [v][0-9].[0-9].[0-9] | Select-Object -First 1
         $Date = (Get-Date).ToUniversalTime().ToString("yyyyMMdd-HHmmss")
 
         Write-Host "Last Tag: $LastTag"
 
         if ($LastTag -ne $null)
         {
-            $Major = $LastTag.Split(".")[0]
-            $Minor = $LastTag.Split(".")[1]
-            $Patch = [string]([int]$LastTag.Split(".")[2] + 1)
-            $BuildNo = "$Major.$Minor.$Patch"
+          $LastTag = $LastTag.TrimStart("v")
+          $Major = $LastTag.Split(".")[0].Substring(
+          $Minor = $LastTag.Split(".")[1]
+          $Patch = [string]([int]$LastTag.Split(".")[2] + 1)
+          $BuildNo = "$Major.$Minor.$Patch"
         }
         else 
         {
-            $BuildNo = "0.0.0"
+          $BuildNo = "0.0.0"
         }
 
         if ($Branch -ne 'refs/heads/main')
         {
-            $BuildNo = $BuildNo+ "-$BranchName-$Date"
+          $BuildNo = $BuildNo+ "-$BranchName-$Date"
         }
 
         Write-Host "BuildNo: $BuildNo"
@@ -67,7 +66,7 @@ jobs:
     - name: Tag commit
       shell: pwsh
       if: ${{ github.ref == 'refs/heads/main'}}
-      run: git tag -l "$BuildNo"
+      run: git tag -l "v$BuildNo"
   deployment: 
     runs-on: ubuntu-latest
     environment: Nuget
