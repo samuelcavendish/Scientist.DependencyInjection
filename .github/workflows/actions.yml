@@ -26,8 +26,7 @@ jobs:
           $BranchName = "PR${{github.event.number}}"
         }
         
-        Write-Host git tag --sort=-committerdate -l [v][0-9].[0-9].[0-9]
-        $LastTag = git tag --sort=-committerdate -l [v][0-9].[0-9].[0-9]
+        $LastTag = git describe --tags --abbrev=0
         $Date = (Get-Date).ToUniversalTime().ToString("yyyyMMdd-HHmmss")
 
         Write-Host "Last Tag: $LastTag"
@@ -84,4 +83,4 @@ jobs:
         name: packages  
     - name: Publish
       if: equals(${{github.ref}}, 'refs/heads/main')
-      run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_PAT}}
+      run: nuget push **\Scientist.DependencyInjection*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_PAT}}
