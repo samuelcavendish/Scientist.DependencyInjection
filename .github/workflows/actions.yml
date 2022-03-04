@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  Major: 1
+  Minor: 1
+  Main: $Branch -eq 'refs/heads/main'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -35,8 +40,8 @@ jobs:
         if ($LastTag -ne $null)
         {
           $LastTag = $LastTag.TrimStart("v")
-          $Major = $LastTag.Split(".")[0]
-          $Minor = $LastTag.Split(".")[1]
+          $Major = $env:Main ? $LastTag.Split(".")[0] : $env:Major
+          $Minor = $env:Main ? $LastTag.Split(".")[1] : $env:Minor
           $Patch = [string]([int]$LastTag.Split(".")[2] + 1)
           $BuildNo = "$Major.$Minor.$Patch"
         }
