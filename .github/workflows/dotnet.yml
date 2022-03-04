@@ -22,8 +22,8 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Pack
-      run: dotnet pack Scientist.DependencyInjection/Scientist.DependencyInjection.csproj /p:Configuration=Release /p:PackageVersion=$GITHUB_RUN_ID --verbosity Detailed
+      run: dotnet pack Scientist.DependencyInjection/Scientist.DependencyInjection.csproj /p:Configuration=Release --output ~/packages /p:PackageVersion=$GITHUB_RUN_ID --verbosity Detailed
     - uses: actions/upload-artifact@v3
       with:
         name: packages
-        path: ~/**/*.nupkg
+        path: ~/packages/**/*.nupkg
