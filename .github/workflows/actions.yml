@@ -40,8 +40,8 @@ jobs:
         if ($LastTag -ne $null)
         {
           $LastTag = $LastTag.TrimStart("v")
-          $Major = ${{ env.main }} ? $LastTag.Split(".")[0] : ${{ env.major }}
-          $Minor = ${{ env.main }} ? $LastTag.Split(".")[1] : ${{ env.minor }}
+          $Major = '${{ env.main }}' ? $LastTag.Split(".")[0] : ${{ env.major }}
+          $Minor = '${{ env.main }}' ? $LastTag.Split(".")[1] : ${{ env.minor }}
           $Patch = [string]([int]$LastTag.Split(".")[2] + 1)
           $BuildNo = "$Major.$Minor.$Patch"
         }
