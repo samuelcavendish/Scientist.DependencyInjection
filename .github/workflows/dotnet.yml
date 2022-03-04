@@ -64,3 +64,10 @@ jobs:
       with:
         name: packages
         path: ~/packages/**/*.nupkg
+    - name: Tag commit
+      shell: pwsh
+      run: |
+        if ($Branch -eq 'refs/heads/main')
+        {
+            git tag -l "$BuildNo"
+        }
