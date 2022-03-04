@@ -1,4 +1,4 @@
-name: .NET
+name: Scientist.DependencyInjection
 
 on:
   push:
@@ -25,8 +25,9 @@ jobs:
         {
           $BranchName = "PR${{github.event.number}}"
         }
-
-        $LastTag = git tag --sort=-committerdate -l [v][0-9].[0-9].[0-9] | Select-Object -First 1
+        
+        git fetch --tags
+        $LastTag = git tag --sort=-version:refname -l [v][0-9].[0-9].[0-9] | Select-Object -First 1
         $Date = (Get-Date).ToUniversalTime().ToString("yyyyMMdd-HHmmss")
 
         Write-Host "Last Tag: $LastTag"
@@ -46,7 +47,7 @@ jobs:
 
         if ($Branch -ne 'refs/heads/main')
         {
-          $BuildNo = $BuildNo+ "-$BranchName-$Date"
+          $BuildNo = $BuildNo + "-$BranchName-$Date"
         }
 
         Write-Host "BuildNo: $BuildNo"
@@ -66,7 +67,11 @@ jobs:
     - name: Tag commit
       shell: pwsh
       if: ${{ github.ref == 'refs/heads/main'}}
-      run: git tag -l "v$BuildNo"
+      run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
+        git tag -a "v$env:BuildNo" -m "Increment Build No"
+        git push origin "v$env:BuildNo"
   deployment: 
     runs-on: ubuntu-latest
     environment: Nuget
@@ -79,4 +84,4 @@ jobs:
         name: packages  
     - name: Publish
       if: equals(${{github.ref}}, 'refs/heads/main')
-      run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_PAT}}
+      run: nuget push **\Scientist.DependencyInjection*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_PAT}}
