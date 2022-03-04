@@ -50,7 +50,7 @@ jobs:
         }
 
         Write-Host "BuildNo: $BuildNo"
-        Write-Host "BuildNo=$BuildNo" | Out-File -FilePath ${{github.env}} -Encoding utf-8 -Append
+        echo "BuildNo=$BuildNo" | Out-File -FilePath ${{github.env}} -Encoding utf-8 -Append
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
