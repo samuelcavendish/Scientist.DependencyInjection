@@ -1,4 +1,4 @@
-name: .NET
+name: Scientist.DependencyInjection
 
 on:
   push:
