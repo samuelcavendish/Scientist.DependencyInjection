@@ -27,7 +27,7 @@ jobs:
         }
         
         Write-Host git tag --sort=-committerdate -l [v][0-9].[0-9].[0-9]
-        $LastTag = git tag --sort=-committerdate -l [v][0-9].[0-9].[0-9] | Select-Object -First 1
+        $LastTag = git tag --sort=-committerdate -l [v][0-9].[0-9].[0-9]
         $Date = (Get-Date).ToUniversalTime().ToString("yyyyMMdd-HHmmss")
 
         Write-Host "Last Tag: $LastTag"
@@ -70,7 +70,7 @@ jobs:
       run: |
         git config user.name "GitHub Actions Bot"
         git config user.email "<>"
-        git tag -a "v$env:BuildNo"
+        git tag -a "v$env:BuildNo" -m "Increment Build No"
         git push origin "v$env:BuildNo"
   deployment: 
     runs-on: ubuntu-latest
