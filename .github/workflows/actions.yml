@@ -7,9 +7,9 @@ on:
     branches: [ main ]
 
 env:
-  Major: 1
-  Minor: 1
-  Main: $Branch -eq 'refs/heads/main'
+  major: 1
+  minor: 1
+  main: ${{github.ref}} -eq 'refs/heads/main'
 
 jobs:
   build:
@@ -40,8 +40,8 @@ jobs:
         if ($LastTag -ne $null)
         {
           $LastTag = $LastTag.TrimStart("v")
-          $Major = $env:Main ? $LastTag.Split(".")[0] : $env:Major
-          $Minor = $env:Main ? $LastTag.Split(".")[1] : $env:Minor
+          $Major = ${{ env.main }} ? $LastTag.Split(".")[0] : ${{ env.major }}
+          $Minor = ${{ env.main }} ? $LastTag.Split(".")[1] : ${{ env.minor }}
           $Patch = [string]([int]$LastTag.Split(".")[2] + 1)
           $BuildNo = "$Major.$Minor.$Patch"
         }
