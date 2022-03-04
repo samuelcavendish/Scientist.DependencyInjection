@@ -19,9 +19,9 @@ jobs:
       shell: pwsh
       run: |
         $Branch= "${{github.ref}}"
-        $BranchName= "${{github.ref.name}}".ToLower()
+        $BranchName= "${{github.ref_name}}".ToLower()
 
-        if (${{github.event.name}} -eq 'pull_request')
+        if (${{github.event.type}} -eq 'pull_request')
         {
             $BranchName = "PR${{github.event.number}}"
         }
