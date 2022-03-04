@@ -74,7 +74,12 @@ jobs:
   deployment: 
     runs-on: ubuntu-latest
     environment: Nuget
+    needs: build
     steps:
-      - name: Publish
-        if: equals(${{github.ref}}, 'refs/heads/main')
-        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_PAT}}
+    - name: Download a Build Artifact
+      uses: actions/download-artifact@v3.0.0
+      with:
+        name: packages  
+    - name: Publish
+      if: equals(${{github.ref}}, 'refs/heads/main')
+      run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_PAT}}
