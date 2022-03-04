@@ -41,8 +41,7 @@ jobs:
           $LastTag = $LastTag.TrimStart("v")
           $Major = '${{github.ref}}' -eq 'refs/heads/main' ? ${{ env.major }} : $LastTag.Split(".")[0]
           $Minor = '${{github.ref}}' -eq 'refs/heads/main' ? ${{ env.minor }} : $LastTag.Split(".")[1] 
-          $Patch = ('${{github.ref}}' -eq 'refs/heads/main' -and ${{ env.major }} -eq $LastTag.Split(".")[0] -and ${{ env.minor }} -eq $LastTag.Split(".")[1])
-            ? [string]([int]$LastTag.Split(".")[2] + 1) : 0
+          $Patch = ('${{github.ref}}' -eq 'refs/heads/main' -and ${{ env.major }} -eq $LastTag.Split(".")[0] -and ${{ env.minor }} -eq $LastTag.Split(".")[1]) ? [string]([int]$LastTag.Split(".")[2] + 1) : 0
           $BuildNo = "$Major.$Minor.$Patch"
         }
         else 
