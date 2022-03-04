@@ -18,38 +18,39 @@ jobs:
     - name: Set Build Number 
       shell: pwsh
       run: |
-          $Branch= "$GITHUB_REF" 
-          $BranchName= "$GITHUB_REF_NAME".ToLower() 
-          Write-Host "Branch: $Branch - Branch Name $BranchName"
+        $Branch= "${{github.ref}}"
+        $BranchName= "${{github.ref.name}}".ToLower()
+        Write-Host "Branch: $Branch - Branch Name $BranchName"
 
-          if ($GITHUB_EVENT_NAME -eq 'pull_request')
-          {
-              $BranchName = "PR${{github.event.number}}"
-          }
+        if ($GITHUB_EVENT_NAME -eq 'pull_request')
+        {
+            #$BranchName = "PR${{github.event.number}}"
+        }
 
-          $LastTag = git tag --sort=-committerdate -l [0-9].[0-9].[0-9] | Select-Object -First 1
-          $Date = (Get-Date).ToUniversalTime().ToString("yyyyMMdd-HHmmss")
+        $LastTag = git tag --sort=-committerdate -l [0-9].[0-9].[0-9] | Select-Object -First 1
+        $Date = (Get-Date).ToUniversalTime().ToString("yyyyMMdd-HHmmss")
 
-          Write-Host "Last Tag: $LastTag"
+        Write-Host "Last Tag: $LastTag"
 
-          if ($LastTag -ne $null)
-          {
-              $Major = $LastTag.Split(".")[0]
-              $Minor = $LastTag.Split(".")[1]
-              $Patch = [string]([int]$LastTag.Split(".")[2] + 1)
-              $BuildNo = "$Major.$Minor.$Patch"
-          }
-          else 
-          {
-              $BuildNo = "0.0.0"
-          }
+        if ($LastTag -ne $null)
+        {
+            $Major = $LastTag.Split(".")[0]
+            $Minor = $LastTag.Split(".")[1]
+            $Patch = [string]([int]$LastTag.Split(".")[2] + 1)
+            $BuildNo = "$Major.$Minor.$Patch"
+        }
+        else 
+        {
+            $BuildNo = "0.0.0"
+        }
 
-          if ($Branch -ne 'refs/heads/main')
-          {
-              $BuildNo = $BuildNo + "-$Date-$BranchName"
-          }
+        if ($Branch -ne 'refs/heads/main')
+        {
+            $BuildNo = $BuildNo+ "-$Date-$BranchName"
+        }
 
-          Write-Host "BuildNo: $BuildNo"
+        Write-Host "BuildNo: $BuildNo"
+        Write-Host "BuildNo=$BuildNo" | Out-File -FilePath ${{github.env}} -Encoding utf-8 -Append
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
