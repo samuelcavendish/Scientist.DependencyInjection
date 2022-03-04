@@ -20,12 +20,13 @@ jobs:
       run: |
         $Branch= "${{github.ref}}"
         $BranchName= "${{github.ref.name}}".ToLower()
-        Write-Host "Branch: $Branch - Branch Name $BranchName"
 
-        if ($GITHUB_EVENT_NAME -eq 'pull_request')
+        if (${{github.event.name}} -eq 'pull_request')
         {
             $BranchName = "PR${{github.event.number}}"
         }
+        
+        Write-Host "Branch: $Branch - Branch Name $BranchName"
 
         $LastTag = git tag --sort=-committerdate -l [0-9].[0-9].[0-9] | Select-Object -First 1
         $Date = (Get-Date).ToUniversalTime().ToString("yyyyMMdd-HHmmss")
