@@ -67,7 +67,7 @@ jobs:
       shell: pwsh
       if: ${{ github.ref == 'refs/heads/main'}}
       run: |
-        git tag -l "v$env:BuildNo"
+        git tag -a "v$env:BuildNo"
         git push origin "v$env:BuildNo"
   deployment: 
     runs-on: ubuntu-latest
