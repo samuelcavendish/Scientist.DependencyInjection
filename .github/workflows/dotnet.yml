@@ -16,9 +16,8 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Set Build Number 
-      uses: actions/setup-dotnet@v1
-      with: 
-        inlineScript: |
+      shell: pwsh
+      run: |
           $Branch= "$GITHUB_REF" 
           $BranchName= "$GITHUB_REF_NAME".ToLower() 
           Write-Host "Branch: $Branch - Branch Name $BranchName"
