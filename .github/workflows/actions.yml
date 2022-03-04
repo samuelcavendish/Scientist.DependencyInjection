@@ -9,8 +9,7 @@ on:
 env:
   major: 1
   minor: 1
-  main: "'${{github.ref}}' -eq 'refs/heads/main'"
-
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -40,9 +39,9 @@ jobs:
         if ($LastTag -ne $null)
         {
           $LastTag = $LastTag.TrimStart("v")
-          $Major = ${{ env.main }} ? ${{ env.major }} : $LastTag.Split(".")[0]
-          $Minor = ${{ env.main }} ? ${{ env.minor }} : $LastTag.Split(".")[1] 
-          $Patch = [string]([int]$LastTag.Split(".")[2] + 1)
+          $Major = '${{github.ref}}' -eq 'refs/heads/main' ? ${{ env.major }} : $LastTag.Split(".")[0]
+          $Minor = '${{github.ref}}' -eq 'refs/heads/main' ? ${{ env.minor }} : $LastTag.Split(".")[1] 
+          $Patch = '${{github.ref}}' -eq 'refs/heads/main' && ${{ env.major }} -eq $LastTag.Split(".")[0] && ${{ env.minor }} -eq $LastTag.Split(".")[1]  ? [string]([int]$LastTag.Split(".")[2] + 1) : 0
           $BuildNo = "$Major.$Minor.$Patch"
         }
         else 
