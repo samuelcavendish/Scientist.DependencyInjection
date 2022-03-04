@@ -24,7 +24,7 @@ jobs:
 
         if ($GITHUB_EVENT_NAME -eq 'pull_request')
         {
-            #$BranchName = "PR${{github.event.number}}"
+            $BranchName = "PR${{github.event.number}}"
         }
 
         $LastTag = git tag --sort=-committerdate -l [0-9].[0-9].[0-9] | Select-Object -First 1
