@@ -66,14 +66,12 @@ jobs:
         path: ~/packages/**/*.nupkg
     - name: Tag commit
       shell: pwsh
-      run: |
-        if ('${{github.ref}}' -eq 'refs/heads/main')
-        {
-            git tag -l "$BuildNo"
-        }
+      if: ${{ github.ref == 'refs/heads/main'}}
+      run: git tag -l "$BuildNo"
   deployment: 
     runs-on: ubuntu-latest
     environment: Nuget
+    if: ${{ github.ref == 'refs/heads/main'}}
     needs: build
     steps:
     - name: Download a Build Artifact
