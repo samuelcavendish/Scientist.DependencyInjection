@@ -71,3 +71,10 @@ jobs:
         {
             git tag -l "$BuildNo"
         }
+  deployment: 
+    runs-on: ubuntu-latest
+    environment: Nuget
+    steps:
+      - name: Publish
+        if: equals(${{github.ref}}, 'refs/heads/main')
+        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_PAT}}
