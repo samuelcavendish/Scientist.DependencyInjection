@@ -25,7 +25,8 @@ jobs:
         {
           $BranchName = "PR${{github.event.number}}"
         }
-
+        
+        Write-Host git tag --sort=-committerdate -l [v][0-9].[0-9].[0-9]
         $LastTag = git tag --sort=-committerdate -l [v][0-9].[0-9].[0-9] | Select-Object -First 1
         $Date = (Get-Date).ToUniversalTime().ToString("yyyyMMdd-HHmmss")
 
@@ -46,7 +47,7 @@ jobs:
 
         if ($Branch -ne 'refs/heads/main')
         {
-          $BuildNo = $BuildNo+ "-$BranchName-$Date"
+          $BuildNo = $BuildNo + "-$BranchName-$Date"
         }
 
         Write-Host "BuildNo: $BuildNo"
@@ -58,7 +59,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Pack
-      run: dotnet pack Scientist.DependencyInjection/Scientist.DependencyInjection.csproj /p:Configuration=Release --output ~/packages /p:PackageVersion=$BuildNo --verbosity Detailed
+      run: dotnet pack Scientist.DependencyInjection/Scientist.DependencyInjection.csproj /p:Configuration=Release --output ~/packages /p:PackageVersion=$env:BuildNo --verbosity Detailed
     - uses: actions/upload-artifact@v3
       with:
         name: packages
@@ -67,6 +68,8 @@ jobs:
       shell: pwsh
       if: ${{ github.ref == 'refs/heads/main'}}
       run: |
+        git config user.name "GitHub Actions Bot"
+        git config user.email "<>"
         git tag -a "v$env:BuildNo"
         git push origin "v$env:BuildNo"
   deployment: 
