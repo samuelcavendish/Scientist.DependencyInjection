@@ -34,7 +34,7 @@ jobs:
         if ($LastTag -ne $null)
         {
           $LastTag = $LastTag.TrimStart("v")
-          $Major = $LastTag.Split(".")[0].Substring(
+          $Major = $LastTag.Split(".")[0]
           $Minor = $LastTag.Split(".")[1]
           $Patch = [string]([int]$LastTag.Split(".")[2] + 1)
           $BuildNo = "$Major.$Minor.$Patch"
