@@ -41,7 +41,7 @@ jobs:
         }
         else 
         {
-          $BuildNo = "0.0.0"
+          $BuildNo = "0.0.1"
         }
 
         if ($Branch -ne 'refs/heads/main')
@@ -66,7 +66,9 @@ jobs:
     - name: Tag commit
       shell: pwsh
       if: ${{ github.ref == 'refs/heads/main'}}
-      run: git tag -l "v$BuildNo"
+      run: |
+        git tag -l "v$BuildNo"
+        git push origin "v$BuildNo"
   deployment: 
     runs-on: ubuntu-latest
     environment: Nuget
