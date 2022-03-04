@@ -67,7 +67,7 @@ jobs:
     - name: Tag commit
       shell: pwsh
       run: |
-        if ($Branch -eq 'refs/heads/main')
+        if ('${{github.ref}}' -eq 'refs/heads/main')
         {
             git tag -l "$BuildNo"
         }
