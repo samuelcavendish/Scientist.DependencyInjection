@@ -15,6 +15,40 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 6.0.x
+    - name: Set Build Number 
+      run: |
+        $Branch= "$GITHUB_REF" 
+        $BranchName= "$GITHUB_REF_NAME".ToLower() 
+        Write-Host 'Branch: $Branch - Branch Name $BranchName' 
+
+        if ($GITHUB_EVENT_NAME -eq 'pull_request')
+        {
+            $BranchName = "PR${{github.event.number}}"
+        }
+
+        $LastTag = git tag --sort=-committerdate -l [0-9].[0-9].[0-9] | Select-Object -First 1
+        $Date = (Get-Date).ToUniversalTime().ToString("yyyyMMdd-HHmmss")
+
+        Write-Host "Last Tag: $LastTag"
+
+        if ($LastTag -ne $null)
+        {
+            $Major = $LastTag.Split(".")[0]
+            $Minor = $LastTag.Split(".")[1]
+            $Patch = [string]([int]$LastTag.Split(".")[2] + 1)
+            $BuildNo = "$Major.$Minor.$Patch"
+        }
+        else 
+        {
+            $BuildNo = "0.0.0"
+        }
+
+        if ($Branch -ne 'refs/heads/main')
+        {
+            $BuildNo = $BuildNo + "-$Date-$BranchName"
+        }
+
+        Write-Host "BuildNo: $BuildNo"
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -22,7 +56,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Pack
-      run: dotnet pack Scientist.DependencyInjection/Scientist.DependencyInjection.csproj /p:Configuration=Release --output ~/packages /p:PackageVersion=0.0.$GITHUB_RUN_NUMBER --verbosity Detailed
+      run: dotnet pack Scientist.DependencyInjection/Scientist.DependencyInjection.csproj /p:Configuration=Release --output ~/packages /p:PackageVersion=$BuildNo --verbosity Detailed
     - uses: actions/upload-artifact@v3
       with:
         name: packages
