@@ -42,7 +42,7 @@ jobs:
         }
         else 
         {
-          $BuildNo = "0.0.1"
+          $BuildNo = "0.0.0"
         }
 
         if ($Branch -ne 'refs/heads/main')
