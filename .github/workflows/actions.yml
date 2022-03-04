@@ -26,7 +26,8 @@ jobs:
           $BranchName = "PR${{github.event.number}}"
         }
         
-        $LastTag = git describe --tags --abbrev=0
+        git fetch --tags
+        $LastTag = git tag --sort=committerdate -l [v][0-9].[0-9].[0-9] | Select-Object -First 1
         $Date = (Get-Date).ToUniversalTime().ToString("yyyyMMdd-HHmmss")
 
         Write-Host "Last Tag: $LastTag"
